@@ -16,7 +16,7 @@ export function decryptAES(cipherText: string, clientSecret: string): string {
 }
 
 
-const MASTER_SECRET = process.env.MASTER_SECRET_KEY;
+const MASTER_SECRET = process.env.MASTER_SECRET_KEY ||'';
 
 function getUnixEpoch(date: Date): number {
   return Math.floor(date.getTime() / 1000);
