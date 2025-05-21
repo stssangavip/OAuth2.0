@@ -94,3 +94,15 @@ export const accessverifed = async (req: Request, res: Response) => {
   // Redirect Zapier back with the auth code
   return res.redirect(`${redirect_uri}?code=${authCode}&state=${state}`);
 }
+
+
+export const VerifedAuthentication = async (req: Request, res: Response) =>  {
+  const auth = req.headers.authorization;
+
+  if (!auth || !auth.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  // fake response, normally you'd verify the token
+  res.status(200).json({ user: 'test-user' });
+};
