@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { decryptAES, generateAccessToken, generateRefreshToken, encrypt, verifyRefreshToken } from '../Utilities/Utility';
 import redisUtility from '../Utilities/redisUtility';
-
+import jwt from 'jsonwebtoken';
 
 export const generateTokens = async (req: Request, res: Response) => {
     console.log('👉 Incoming /oauth/token request body:', req.body);
@@ -105,4 +105,47 @@ export const VerifedAuthentication = async (req: Request, res: Response) =>  {
 
   // fake response, normally you'd verify the token
   res.status(200).json({ user: 'test-user' });
+};
+// Example: POST /register-webhook
+export const RegisterWebHook = async (req: Request, res: Response) => {
+  const { userId, webhookUrl } = req.body;
+  const authHeader = req.headers.authorization;
+
+  const token = authHeader?.split(' ')[1];
+
+  const decoded = verifyCrtAccessToken(token || '');
+  if (!decoded) {
+    return res.status(401).json({ message: 'Invalid access token' });
+  }
+const tokenData = {
+      webhookUrl: webhookUrl,
+      userId: userId
+    };
+  await redisUtility.setRedisDataWithExpiry(decoded.clientId, tokenData, 60 * 60 * 24 * 30);
+
+  res.status(200).json({ message: 'Webhook registered' });
+};
+
+export const verifyCrtAccessToken = (token: string): { clientId: string; clientSecret?: string; userToken: string } | null => {
+  try {
+    const MASTER_SECRET = process.env.MASTER_SECRET_KEY ||'';
+    const decoded = jwt.verify(token, MASTER_SECRET) as jwt.JwtPayload;
+
+    const clientId = decoded.sub as string;
+    const userToken = decoded.aud as string;
+    const clientSecret = decoded.clientSecret as string; // Optional, if you included it during token generation
+
+    if (!clientId || !userToken) {
+      throw new Error('Invalid token payload');
+    }
+
+    return {
+      clientId,
+      userToken,
+      clientSecret
+    };
+  } catch (error) {
+    console.error('Access token verification failed:', error);
+    return null;
+  }
 };
