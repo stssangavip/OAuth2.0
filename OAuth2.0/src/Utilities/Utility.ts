@@ -16,7 +16,7 @@ export function decryptAES(cipherText: string, clientSecret: string): string {
 }
 
 
-const MASTER_SECRET = process.env.REFRESH_SECRET || 'a1625f035b7a4c97a855143a98558569';
+const MASTER_SECRET = process.env.MASTER_SECRET_KEY;
 
 function getUnixEpoch(date: Date): number {
   return Math.floor(date.getTime() / 1000);
@@ -89,7 +89,7 @@ export function encrypt(clientId: string, userToken: string, clientSecret: strin
 }
 
 export function verifyRefreshToken(token: string): { decoded: jwt.JwtPayload | null; expired: boolean } {
-  try {
+  try {''
     const decoded = jwt.verify(token, MASTER_SECRET) as jwt.JwtPayload;
     return { decoded, expired: false };
   } catch (error: any) {
