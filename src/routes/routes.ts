@@ -12,7 +12,7 @@ router.get('/oauth/authorize', (req: Request, res: Response, next: NextFunction)
 	router.get('/me', (req: Request, res: Response, next: NextFunction) => {
 	VerifedAuthentication(req, res).catch(next);
 });
-	router.post('oauth/RegisterWebHook', (req: Request, res: Response, next: NextFunction) => {
+	router.post('/oauth/RegisterWebHook', (req: Request, res: Response, next: NextFunction) => {
 	RegisterWebHook(req, res).catch(next);
 });
 export default router;
