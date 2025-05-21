@@ -108,7 +108,10 @@ export const VerifedAuthentication = async (req: Request, res: Response) =>  {
 };
 // Example: POST /register-webhook
 export const RegisterWebHook = async (req: Request, res: Response) => {
-  const { userId, webhookUrl } = req.body;
+ 
+      console.log('👉 Incoming /oauth/RegisterWebHook request body:', req.body);
+      console.log('👉 Incoming /oauth/RegisterWebHook request body:', req.headers.authorization);
+       const { userId, webhookUrl } = req.body;
   const authHeader = req.headers.authorization;
 
   const token = authHeader?.split(' ')[1];
