@@ -4,6 +4,7 @@ import redisUtility from '../Utilities/redisUtility';
 
 
 export const generateTokens = async (req: Request, res: Response) => {
+    console.log('👉 Incoming /oauth/token request body:', req.body);
   try {
     const { clientId, userToken, clientSecret, refreshToken } = req.body;
 
@@ -80,6 +81,7 @@ export const generateTokens = async (req: Request, res: Response) => {
 };
 
 export const accessverifed = async (req: Request, res: Response) => {
+    console.log('👉 Incoming /oauth/accessverifed request body:', req.body);
   const { client_id, redirect_uri,  response_type, state } = req.query;
 
   // Simulate login and grant flow (normally you'd show a login UI)
