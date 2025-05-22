@@ -111,7 +111,7 @@ export const RegisterWebHook = async (req: Request, res: Response) => {
  
       console.log('Incoming /oauth/RegisterWebHook request body:', req.body);
       console.log('Incoming /oauth/RegisterWebHook request body:', req.headers.authorization);
-       const { userId, webhookUrl } = req.body;
+       const { userId, hookUrl } = req.body;
   const authHeader = req.headers.authorization;
 
   const token = authHeader?.split(' ')[1];
@@ -121,7 +121,7 @@ export const RegisterWebHook = async (req: Request, res: Response) => {
     return res.status(401).json({ message: 'Invalid access token' });
   }
 const tokenData = {
-      webhookUrl: webhookUrl,
+      webhookUrl: hookUrl,
       userId: userId
     };
   await redisUtility.setRedisDataWithExpiry(decoded.clientId, tokenData, 60 * 60 * 24 * 30);
