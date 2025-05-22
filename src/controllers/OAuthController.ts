@@ -107,7 +107,7 @@ export const VerifedAuthentication = async (req: Request, res: Response) =>  {
   res.status(200).json({ user: 'test-user' });
 };
 // Example: POST /register-webhook
-export const RegisterWebHook = async (req: Request, res: Response) => {
+export const SubcribeWebHook = async (req: Request, res: Response) => {
  
       console.log('Incoming /oauth/RegisterWebHook request body:', req.body);
       console.log('Incoming /oauth/RegisterWebHook request body:', req.headers.authorization);
@@ -130,7 +130,36 @@ const tokenData = {
 
   res.status(200).json({ message: 'Webhook registered' });
 };
+export const UnSubcribeWebHook = async (req: Request, res: Response) => {
+  try {
+    console.log('Incoming /oauth/UnSubcribeWebHook request body:', req.body);
+    console.log('Incoming Authorization Header:', req.headers.authorization);
 
+    const authHeader = req.headers.authorization;
+    const token = authHeader?.split(' ')[1];
+
+    const decoded = verifyCrtAccessToken(token || '');
+    if (!decoded) {
+      return res.status(401).json({ message: 'Invalid access token' });
+    }
+
+    const redisData = await redisUtility.getRedisJson(decoded.clientId);
+    if (!redisData) {
+      return res.status(404).json({ message: 'No webhook found to unsubscribe' });
+    }
+
+    // Remove hookUrl and/or userId from Redis data
+    const { webhookUrl, userId, ...rest } = redisData;
+    const updatedData = { ...rest };
+
+    await redisUtility.setRedisDataWithExpiry(decoded.clientId, updatedData, 60 * 60 * 24 * 30); // 30 days
+
+    return res.status(200).json({ message: 'Webhook unsubscribed' });
+  } catch (error) {
+    console.error('Error in UnSubcribeWebHook:', error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
 export const verifyCrtAccessToken = (token: string): { clientId: string; clientSecret?: string; userToken: string } | null => {
   try {
     const MASTER_SECRET = process.env.MASTER_SECRET_KEY ||'';
