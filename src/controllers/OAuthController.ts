@@ -4,7 +4,7 @@ import redisUtility from '../Utilities/redisUtility';
 import jwt from 'jsonwebtoken';
 
 export const generateTokens = async (req: Request, res: Response) => {
-    console.log('👉 Incoming /oauth/token request body:', req.body);
+    console.log('Incoming /oauth/token request body:', req.body);
   try {
     const { clientId, userToken, clientSecret, refreshToken } = req.body;
 
