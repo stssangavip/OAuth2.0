@@ -120,7 +120,9 @@ export const RegisterWebHook = async (req: Request, res: Response) => {
   if (!decoded) {
     return res.status(401).json({ message: 'Invalid access token' });
   }
+let redisData = await redisUtility.getRedisJson(decoded.clientId);
 const tokenData = {
+  ...redisData,
       webhookUrl: hookUrl,
       userId: userId
     };
