@@ -85,9 +85,6 @@ export const accessverifed = async (req: Request, res: Response) => {
   const { client_id, redirect_uri,  response_type, state } = req.query;
 
   // Simulate login and grant flow (normally you'd show a login UI)
-  if (response_type !== 'code') {
-    return res.status(400).send('Unsupported response_type');
-  }
 
   const authCode = 'test_auth_code'; // Generate this per-user in real apps
 
